@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+    <title>Audiograma</title>
+</head>
+
+<body ng-app="myApp" ng-controller="Ctrl">
+    <div style="width: 40%; display: inline-block">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Frecuencia (Hz) </th>
+                    <th>Oído Izquierdo (dB) </th>
+                    <th>Oído Derecho (dB) </th>
+                </tr>
+                <tr>
+                    <td>125 Hz</td>
+                    <td><input type="number" id="valueIzq1"></td>
+                    <td><input type="number" id="valueDer1"></td>
+                </tr>
+                <tr>
+                    <td>250 Hz</td>
+                    <td><input type="number" id="valueIzq2"></td>
+                    <td><input type="number" id="valueDer2"></td>
+                </tr>
+                <tr>
+                    <td>500 Hz</td>
+                    <td><input type="number" id="valueIzq3"></td>
+                    <td><input type="number" id="valueDer3"></td>
+                </tr>
+                <tr>
+                    <td>1,000 Hz</td>
+                    <td><input type="number" id="valueIzq4"></td>
+                    <td><input type="number" id="valueDer4"></td>
+                </tr>
+                <tr>
+                    <td>2,000 Hz</td>
+                    <td><input type="number" id="valueIzq5"></td>
+                    <td><input type="number" id="valueDer5"></td>
+                </tr>
+                <tr>
+                    <td>4,000 Hz</td>
+                    <td><input type="number" id="valueIzq6"></td>
+                    <td><input type="number" id="valueDer6"></td>
+                </tr>
+                <tr>
+                    <td>8,000 Hz</td>
+                    <td><input type="number" id="valueIzq7"></td>
+                    <td><input type="number" id="valueDer7"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display: inline-block; width: 55%">
+        <canvas id="grafica"></canvas>
+    </div>
+    <br>
+    <button ng-click="audiograma()">Mostrar gráfica</button>
+
+    <button ng-click="clear()">Limpiar datos</button>
+
+</body>
+
+</html>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('Ctrl', function ($scope) {
+        $scope.clear = function (){
+            document.getElementById('valueIzq1').value = 0
+            document.getElementById('valueIzq1').value = 0
+            document.getElementById('valueIzq2').value = 0
+            document.getElementById('valueIzq3').value = 0
+            document.getElementById('valueIzq4').value = 0
+            document.getElementById('valueIzq5').value = 0
+            document.getElementById('valueIzq6').value = 0
+            document.getElementById('valueIzq7').value = 0
+
+            document.getElementById('valueDer1').value = 0
+            document.getElementById('valueDer2').value = 0
+            document.getElementById('valueDer3').value = 0
+            document.getElementById('valueDer4').value = 0
+            document.getElementById('valueDer5').value = 0
+            document.getElementById('valueDer6').value = 0
+            document.getElementById('valueDer7').value = 0
+        }
+
+        $scope.audiograma = function () {
+
+            $scope.frecuencias = ['0', '125', '250', '500', '1,000', '2,000', '4,000', '8,000', '9,000']
+            var dbsIzq = []
+            var dbsDer = []
+
+            var valueIzq1 = document.getElementById('valueIzq1').value
+            var valueIzq2 = document.getElementById('valueIzq2').value
+            var valueIzq3 = document.getElementById('valueIzq3').value
+            var valueIzq4 = document.getElementById('valueIzq4').value
+            var valueIzq5 = document.getElementById('valueIzq5').value
+            var valueIzq6 = document.getElementById('valueIzq6').value
+            var valueIzq7 = document.getElementById('valueIzq7').value
+
+            var valueDer1 = document.getElementById('valueDer1').value
+            var valueDer2 = document.getElementById('valueDer2').value
+            var valueDer3 = document.getElementById('valueDer3').value
+            var valueDer4 = document.getElementById('valueDer4').value
+            var valueDer5 = document.getElementById('valueDer5').value
+            var valueDer6 = document.getElementById('valueDer6').value
+            var valueDer7 = document.getElementById('valueDer7').value
+
+            var dbsIzq = [null, valueIzq1, valueIzq2, valueIzq3, valueIzq4, valueIzq5, valueIzq6, valueIzq7, null]
+            var dbsDer = [null, valueDer1, valueDer2, valueDer3, valueDer4, valueDer5, valueDer6, valueDer7, null]
+
+            var ctx = document.getElementById('grafica').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                title: {
+                    display: true,
+                    text: "Audiograma"
+                },
+                data: {
+                    labels: $scope.frecuencias,
+                    datasets: [{
+                        label: 'Oído Izquierdo',
+                        backgroundColor: 'blue',
+                        fill: false,
+                        borderColor: 'blue',
+                        data: dbsIzq,
+                        pointStyle: 'crossRot',
+                        pointRadius: 10,
+                    }, {
+                        label: 'Oído Derecho',
+                        backgroundColor: 'red',
+                        fill: false,
+                        borderColor: 'red',
+                        data: dbsDer,
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Frecuencia (Hz)'
+							}
+						}],
+						yAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'dB HL'
+							}
+                        }]
+                    }
+                    
+
+                }
+            });
+        }
+    });
+
+</script>
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+        align-content: center;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
